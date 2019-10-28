@@ -1,0 +1,51 @@
+variable,lower ,median,upper,distribution,label
+n_years,25,,25,const,Number of years for simulation
+discount_rate,10,,30,posnorm,Discount rate for reducing future cost and benefit to their present values (%)
+establis_cost,30,,50,posnorm,Cost for setting up agroforestry system (million VND/ha)
+main_cost_stage1,15,,30,posnorm,Annual cost to maintain agroforestry system (million VND/ha/year)
+main_cost_stage2,20,,40,posnorm,Annual cost to maintain agroforestry system (million VND/ha/year)
+main_cost_stage3,20,,40,posnorm,Annual cost to maintain agroforestry system (million VND/ha/year)
+CV_cost,5,,10,posnorm,Variation in maintenance cost (%)
+mono_cost,10,,20,posnorm,Annual cost of maize monoculture system (million VND/ha/year)
+freq_tim_harvest,7,,7,const,Interval between two harvests of timber (years)
+timb_benefit,0,,0,const,Income from every timber cut (million VND)
+num_of_tree,500,,500,const,Number of Son tra trees per ha (trees/ha)
+max_tree_harvest,20,,70,posnorm,The peak yield of Son tra tree (kg/tree)
+time_first_tree_est,5,,5,const,The year when the first yield estimates of Son tra is provided 
+first_tree_est_per,10,,30,posnorm,Percentage of the yield that is attained in the year given by time_first_tree_est compare to the yield at peak production
+time_sec_tree_est,8,,8,const,The year when the second yield estimates of Son tra is provided
+sec_tree_est_per,50,,70,posnorm,Percentage of  yield that is attained in the year given by time_sec_tree_est compare to the yield at peak production
+CV_tree_yield,20,,50,posnorm,Variation in Son tra yield (%)
+yield_tree_risk,0.2,,0.5,posnorm,Yield of Son tra reduced given risk event compare to the yield in the normal year
+tree_price,0.005,,0.02,unif,Price for selling Son tra fruits (million VND/kg)
+num_coff_tree,0,,0,const,Number of coffee tree per ha (trees/ha)
+max_coff_harvest,0,,0,const,The peak yield of coffee (kg/tree)
+time_first_coff_est,0,,0,const,The year when the first yield estimates of coffee is provided 
+first_coff_est_per,0,,0,const,The percentage of coffee yield that is attained in the year given by time_first_tree_est compare to the yield at peak production
+time_sec_coff_est,0,,0,const,The year number when the second yield estimates of coffee is provided
+sec_coff_est_per,0,,0,const,The percentage of coffee  yield that is attained in the year given by time_sec_tree_est compare to the yield at peak production
+coff_frost_yield,0,,0,const,Yield of coffee reduced given forst event compare to the yield in the normal year
+CV_coff_yield,0,,0,const,Variation in coffee yield (%)
+coff_price,0,,0,const,Coffee price (million VND/kg)
+CV_coff_price,0,,0,const,Variation in coffee price (%)
+max_AFmaize,0,,0,const,The maximum yield of maize in AF system(kg/ha)
+min_AFmaize,0,,0,const,The minimum yield of maize in AF system (kg/ha)
+decay_rate_AF,0,,0,const,The annual decrease rate of maize  yield in AF system (%/100)
+max_monomaize,4000,,8000,posnorm,The maximum yield of maize in AF system(kg/ha)
+decay_rate_mono,0.02,,0.05,posnorm,The annual decrease rate of maize yield in monoculture system 
+CV_maize_yield,5,,25,posnorm,Variation in maize yield (%)
+maize_price,0.004,,0.008,posnorm,Maize price (million VND/kg)
+CV_maize_price,5,,10,posnorm,Variation in maize price (%)
+yield_maize_risk,0.2,,0.8,posnorm,Yield of maize reduced given risk compare to the yield in the normal year
+grass_profit,3,,40,unif,Annual benefit from grass (million VND)
+CV_grass_profit,5,,30,posnorm,Variation in grass benefit (%)
+annual_crop,0,,0,const,Benefit from soybean in an given year (million VND/ha)
+mono_soil_loss,20,,70,posnorm,Amount of soil loss from erosion in sole maize system(ton/ha)
+reduced_percents1,0.5,,0.7,posnorm,% soil loss reduced in AF system compare to monoculture 
+reduced_percents2,0.7,,0.9,posnorm,% soil loss reduced in AF system compare to monoculture 
+soil_saved_payment,0.04,,0.1,posnorm,Monetary value of  1 ton of soil saved from erosion (million VND/ha)
+CV_eros_control,5,,15,posnorm,Variation in amount of soil saved from erosion (%)
+cur_change,0.023,,0.023,const,Rate of 1 USD to million VND
+coffee_risk,0.1,,0.3,tnorm_0_1,Chance for frost occur in a given year
+tree_risk,0.1,,0.3,tnorm_0_1,Chance for fruit drop occur in a given year
+maize_risk,0.05,,0.3,tnorm_0_1,Chance for risk factor that affect maize yield happen
