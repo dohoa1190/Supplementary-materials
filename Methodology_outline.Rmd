@@ -1,75 +1,75 @@
 ---
-title: Implementation of Decision Analysis to evaluate different agroforestry interventions
-  in Northern Vietnam
+title: Implementation of Decision Analysis to evaluate different agroforestry interventions in Northern Vietnam
 author: "Hoa Do, Cory Whitney, Eike Luedeling"
 date: "`r Sys.Date()`"
 output:
   html_document: default
 ---
 
-This document illustrates the development of mathematical model to calcualte Net Present Values (NPV) of different agroforestry interventions promoted in Northwest Vietnam under the framework of ICRAF's project. The calculation of NPV for the decision to implement coffee-based agroforesty system with the combination of teak, plum, coffee, annual crop and grass against conventional monoculture of maize will be explained as the illustrative example for the whole process. The same function can be used for the simulationn of other interventions with corresponding input data table for each system provided along in Supplementary materials.
+This document illustrates the development of the mathematical model used to calculate Net Present Values (NPV) of different agroforestry interventions promoted in Northwest Vietnam (##OWN ##CITATION). The calculation of NPV for the decision to implement coffee-based agroforesty system with the combination of teak, plum, coffee, annual crop and grass against conventional monoculture of maize is used as the illustrative example for the whole process. The same function can be used for the other interventions with corresponding input data tables for each system provided in the rest of the supplementary materials.
 
-We employed `decisionSupport` R package and its functions to develop the model and to perform probabilistic simulation. 
+We employed the `decisionSupport` R package and its functions to develop the model and to perform probabilistic simulations. 
 
-The `chance_event()` function calculated the time series occurrence of risk events. This function required two main arguments specified in input tables which are the probability that a particular risk event will happen in a given year and the time line for simulation. 
+The `chance_event()` function was used to calculate the time series occurrence of risk events. This function required two main arguments 1. the probability that a particular risk event will happen in a given year and 2. the time line for the simulation. 
 
-The `gompertz_yield()` calculated the yields of tree crops using identified parameters in the assumed pattern.
+The `gompertz_yield()` was used to calculate the yields of tree crops using identified parameters given an assumed pattern.
 
-The value varier function `vv()` produces time series that contain variation from a specified mean and a desired coefficient of variation, which both were parameters in the input tables. 
+The value varier function `vv()` was used to produce a time series containing variation from a specified mean and a desired coefficient of variation, bothof  which are parameters in the input tables. 
 
-The `discount()` function was used as the last step of the decision model to calculate NPV. The function implemented discounting of future costs or benefits by a decision maker-specific discount rate, which was specified in input tables. 
+The `discount()` function was used as the last step of the decision model to calculate NPV. The function implemented discounting of future costs or benefits by a decision maker-specific discount rate, also specified in the input tables. 
 
-`decisionSupport()` function conducted the full decision analyses by performing probabilistic simulation. The function in requires two inputs:
+`decisionSupport()` function was used to conduct the full decision analyses by performing the probabilistic simulation. The function in requires two inputs:
+1. a data table (.csv format) specifying the names and distributions for all uncertain variables
+2. an R function that predicts decision outcomes based on the variables named in the data table
 
-+ a data table (.csv format) specifying the names and distributions for all uncertain variables
-
-+ an R function that predicts decision outcomes based on the variables named in the data table
-
-We called out `decisionSupport` package in R and defined sample values for all variables:
+First, we loaded the `decisionSupport` package in R and defined sample values for all variables:
 
 ```{r}
 library(decisionSupport)
+
 make_variables<-function(est,n=1)
 {x<-random(rho=est,n=n)
 for(i in colnames(x))assign(i, as.numeric(x[1,i]),envir=.GlobalEnv)}
+
 ```
 
-Applying `make_variables` function to the input data table to generate one random number for each variable.
+We applied the `make_variables` function to the input data table to generate one random number for each variable.
 
 ```{r}
 make_variables(estimate_read_csv(paste("Input tables/CAFS_teak.csv",sep="")))
 ```
 
-The mathematical model could then be coded. We named the function calculating NPV `AF_benefit`
+The mathematical model could then be coded. We gave the name `AF_benefit` to the function that calculates NPV.
 
-```{r}
+```{r message=FALSE,warning=FALSE}
+
 AF_benefit<-function(x,varnames)
 {
-  #We defined each variables as vectors of 25 values corresponding to 25 years of simunlation 
+  #We defined each variable as vectors of 25 values corresponding to 25 years of simulation 
   
   mono_costs<-rep(0,n_years)# the annual cost of maize monoculture 
-  establisment_cost<-rep(0,n_years)# costs for setting up agroforestry system
-  maintenance_cost<-rep(0,n_years)# the annual cost spent in agroforestry system
+  establisment_cost<-rep(0,n_years)# costs for setting up agroforestry systems (AF)
+  maintenance_cost<-rep(0,n_years)# the annual cost spent on AF
   timber_yield<-rep(0,n_years)# the yield of teak
   tree_yield<-rep(0,n_years)# the yield of plum
   coffee_yield<-rep(0,n_years)# the yield of coffee
-  AF_maize<-rep(0,n_years)# the yield of maize in agroforestry system
-  mono_maize<-rep(0,n_years)# the yield of maize in monoculture stand
+  AF_maize<-rep(0,n_years)# the yield of maize in AF
+  mono_maize<-rep(0,n_years)# the yield of maize in monocultures
   grass_benefit<-rep(0,n_years)# the benefit from grass
   annual_benefit<-rep(0,n_years)# the benefit of annual crops
-  reduced_soil_loss<-rep(0,n_years)# amount of soil loss reduced in agroforestry system compare to monoculture system
+  reduced_soil_loss<-rep(0,n_years)# amount of soil loss reduced in AF compared to monoculture systems
   
-  #Simulating the chance for different events to occur during simulation period
+  #Simulating the chance for different events to occur during the simulation period
   frost<-chance_event(coffee_risk,value_if = 1,n=n_years)
   tree.risk<-chance_event(tree_risk,value_if = 1,n=n_years)
   maize.risk<-chance_event(maize_risk,value_if = 1,n=n_years)
   
-  #Number of timber harvest throughout 25 years of simulation
+  #Number of timber harvests throughout 25 years of simulation
   timb_harvest<-as.numeric(1:n_years%%round(freq_tim_harvest)==0)
   
-  #calculate system cost
+  #calculate system costs and convert currency from VND to USD using currency exchange rate (cur_change) applied for any variable with monetary value (i.e. costs and benefits)
   maintenance_cost[1]<-0
-  maintenance_cost[2:4]<-vv(main_cost_stage1,CV_cost,3)/cur_change # converting currency from VND to USD using currency exchange rate (cur_change) and was applied for any variable with monetary value (i.e. costs and benefits)
+  maintenance_cost[2:4]<-vv(main_cost_stage1,CV_cost,3)/cur_change 
   maintenance_cost[5:10]<-vv(main_cost_stage2,CV_cost,6)/cur_change
   maintenance_cost[11:25]<-vv(main_cost_stage3,CV_cost,15)/cur_change
   
@@ -77,13 +77,13 @@ AF_benefit<-function(x,varnames)
   establisment_cost[2:25]<-0
 
 
-  #calculate system benefit
+  #calculate system benefits
   
   #benefit of timber
   timber_benefit<-(timb_benefit*timb_harvest)/cur_change
 
   
-  #benefit of tree
+  #benefit of trees
   tree_yield<-gompertz_yield(max_harvest = max_tree_harvest,
                              time_to_first_yield_estimate = time_first_tree_est,
                              time_to_second_yield_estimate = time_sec_tree_est,
@@ -111,9 +111,8 @@ AF_benefit<-function(x,varnames)
   coffee_yield<-coffee_yield*(1-frost*coff_frost_yield) # account risk of frost in the calculation of coffee yield
   tot_coffee_yield<-coffee_yield*num_coff_tree
   coffee_benefit<-(tot_coffee_yield*vv(coff_price,CV_coff_price,n_years))/cur_change
-
   
-  #benefit of maize in AF system
+  #benefit of maize in AF systems
  time<-1:n_years
   decay_speed_AF<--log(1-decay_rate_AF)
   AF_maize<-min_AFmaize+(max_AFmaize-min_AFmaize)*exp(-decay_speed_AF*(time-1))
@@ -144,23 +143,24 @@ AF_benefit<-function(x,varnames)
   soil_saved<-vv(reduced_soil_loss,CV_eros_control,n=n_years)
   erosion_benefit<-(soil_saved*soil_saved_payment)/cur_change
 
-  #Calculating NPVs of agroforestry and monoculture and NPV of the decision choosing agroforestry over monoculture of maize
+  #Calculating NPVs of AF and monoculture and NPV of the decision choosing AF over monocultures of maize
 system_benefit<-timber_benefit+tree_benefit+coffee_benefit+AF_maize_benefit+grass_benefit+annual_benefit+erosion_benefit
   bottomline_benefit<-system_benefit-maintenance_cost-establisment_cost
   tradeoff_benefit<-bottomline_benefit-mono_benefit
   cash_flow<-discount(bottomline_benefit,discount_rate=discount_rate,calculate_NPV = FALSE)# this returned 25 values of discounted cashflows for 25 years
   cum_cash_flow<-cumsum(cash_flow)# this calculated cummulative values of discounted cashflows
-  NPV_mono<-discount(mono_benefit,discount_rate=discount_rate,calculate_NPV = TRUE )#NPV of monoculture system
-  NPV_tradeoff<-discount(tradeoff_benefit,discount_rate=discount_rate,calculate_NPV = TRUE )#NVP of the decision choosing agroforestry over monoculture
-  NPV_system<-discount(bottomline_benefit,discount_rate=discount_rate,calculate_NPV = TRUE)#NVP of agroforestry system
+  NPV_mono<-discount(mono_benefit,discount_rate=discount_rate,calculate_NPV = TRUE ) #NPV of monoculture system
+  NPV_tradeoff<-discount(tradeoff_benefit,discount_rate=discount_rate,calculate_NPV = TRUE ) #NVP of the decision to choose AF over monoculture
+  NPV_system<-discount(bottomline_benefit,discount_rate=discount_rate,calculate_NPV = TRUE)#NVP of AF system
   return(list(cashflow=cum_cash_flow,trade_off=NPV_tradeoff,NPV_maize=NPV_mono,NPV=NPV_system))
 }
 
 ```
 
-Probabilistic simulation was implemented through `decisionSupport` function using input data table and the developed R function. This step returns Monte Carlo dataset with 10,000 values for each of input variables and each of response variables that are called out in the return list and VIP score for each input variable from PLS regression.
+The probabilistic simulation was implemented using the `decisionSupport` function to run a Monte Carlo with 10,000 values for each of the input and response variables. These are returned as a list. A VIP score is generated for each input variable of the PLS regression.
 
-```{r message=FALSE,warning=FALSE}
+```{r message=FALSE, warning=FALSE}
+
 decisionSupport(inputFilePath = paste("Input tables/CAFS_teak.csv",sep=""),
                 outputPath = paste("MCResults/CAFS_teak",sep=""),
                 write_table = TRUE,
@@ -170,7 +170,5 @@ decisionSupport(inputFilePath = paste("Input tables/CAFS_teak.csv",sep=""),
 
 ```
 
-
-
-
+## Add general output figures here
 
