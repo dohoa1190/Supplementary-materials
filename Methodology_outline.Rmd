@@ -14,17 +14,15 @@ The `chance_event()` function was used to calculate the time series occurrence o
 
 The `gompertz_yield()` was used to calculate the yields of tree crops using identified parameters given an assumed pattern.
 
-The value varier function `vv()` was used to produce a time series containing variation from a specified mean and a desired coefficient of variation, which both were parameters in the input tables. 
+The value varier function `vv()` was used to produce a time series containing variation from a specified mean and a desired coefficient of variation, bothof  which are parameters in the input tables. 
 
-The `discount()` function was used as the last step of the decision model to calculate NPV. The function implemented discounting of future costs or benefits by a decision maker-specific discount rate, which was specified in input tables. 
+The `discount()` function was used as the last step of the decision model to calculate NPV. The function implemented discounting of future costs or benefits by a decision maker-specific discount rate, also specified in the input tables. 
 
-`decisionSupport()` function conducted the full decision analyses by performing probabilistic simulation. The function in requires two inputs:
+`decisionSupport()` function was used to conduct the full decision analyses by performing the probabilistic simulation. The function in requires two inputs:
+1. a data table (.csv format) specifying the names and distributions for all uncertain variables
+2. an R function that predicts decision outcomes based on the variables named in the data table
 
-+ a data table (.csv format) specifying the names and distributions for all uncertain variables
-
-+ an R function that predicts decision outcomes based on the variables named in the data table
-
-We called out `decisionSupport` package in R and defined sample values for all variables:
+First, we loaded the `decisionSupport` package in R and defined sample values for all variables:
 
 ```{r}
 library(decisionSupport)
@@ -33,13 +31,13 @@ make_variables<-function(est,n=1)
 for(i in colnames(x))assign(i, as.numeric(x[1,i]),envir=.GlobalEnv)}
 ```
 
-Applying `make_variables` function to the input data table to generate one random number for each variable.
+We applied the `make_variables` function to the input data table to generate one random number for each variable.
 
 ```{r}
 make_variables(estimate_read_csv(paste("Input tables/CAFS_teak.csv",sep="")))
 ```
 
-The mathematical model could then be coded. We named the function calculating NPV `AF_benefit`
+The mathematical model could then be coded. We gave the name `AF_benefit` to the function that calculates NPV.
 
 ```{r}
 AF_benefit<-function(x,varnames)
