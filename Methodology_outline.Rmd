@@ -41,11 +41,11 @@ make_variables(estimate_read_csv(paste("Input tables/CAFS_teak.csv",sep="")))
 
 The mathematical model could then be coded. We gave the name `AF_benefit` to the function that calculates NPV.
 
-```{r}
+```{r message=FALSE,warning=FALSE}
 
 AF_benefit<-function(x,varnames)
 {
-  #We defined each variables as vectors of 25 values corresponding to 25 years of simunlation 
+  #We defined each variable as vectors of 25 values corresponding to 25 years of simulation 
   
   mono_costs<-rep(0,n_years)# the annual cost of maize monoculture 
   establisment_cost<-rep(0,n_years)# costs for setting up agroforestry systems (AF)
@@ -161,6 +161,7 @@ system_benefit<-timber_benefit+tree_benefit+coffee_benefit+AF_maize_benefit+gras
 The probabilistic simulation was implemented using the `decisionSupport` function to run a Monte Carlo with 10,000 values for each of the input and response variables. These are returned as a list. A VIP score is generated for each input variable of the PLS regression.
 
 ```{r message=FALSE, warning=FALSE}
+
 decisionSupport(inputFilePath = paste("Input tables/CAFS_teak.csv",sep=""),
                 outputPath = paste("MCResults/CAFS_teak",sep=""),
                 write_table = TRUE,
