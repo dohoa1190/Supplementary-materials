@@ -1,13 +1,12 @@
 ---
-title: Implementation of Decision Analysis to evaluate different agroforestry interventions
-  in Northern Vietnam
+title: Implementation of Decision Analysis to evaluate different agroforestry interventions in Northern Vietnam
 author: "Hoa Do, Cory Whitney, Eike Luedeling"
 date: "`r Sys.Date()`"
 output:
   html_document: default
 ---
 
-This document illustrates the development of mathematical model to calcualte Net Present Values (NPV) of different agroforestry interventions promoted in Northwest Vietnam under the framework of ICRAF's project. The calculation of NPV for the decision to implement coffee-based agroforesty system with the combination of teak, plum, coffee, annual crop and grass against conventional monoculture of maize will be explained as the illustrative example for the whole process. The same function can be used for the simulationn of other interventions with corresponding input data table for each system provided along in Supplementary materials.
+This document illustrates the development of the mathematical model used to calculate Net Present Values (NPV) of different agroforestry interventions promoted in Northwest Vietnam (OWN CITATION). The calculation of NPV for the decision to implement coffee-based agroforesty system with the combination of teak, plum, coffee, annual crop and grass against conventional monoculture of maize will be explained as the illustrative example for the whole process. The same function can be used for the simulationn of other interventions with corresponding input data table for each system provided along in Supplementary materials.
 
 We employed `decisionSupport` R package and its functions to develop the model and to perform probabilistic simulation. 
 
@@ -169,8 +168,6 @@ decisionSupport(inputFilePath = paste("Input tables/CAFS_teak.csv",sep=""),
                 functionSyntax="plainNames")
 
 ```
-
-
 
 
 
