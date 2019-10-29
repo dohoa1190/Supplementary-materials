@@ -6,11 +6,15 @@ output:
   html_document: default
 ---
 
-This document illustrates the development of the mathematical model used to calculate Net Present Values (NPV) of different agroforestry interventions promoted in Northwest Vietnam (##OWN ##CITATION). The calculation of NPV for the decision to implement coffee-based agroforesty system with the combination of teak, plum, coffee, annual crop and grass against conventional monoculture of maize is used as the illustrative example for the whole process. The same function can be used for the other interventions with corresponding input data tables for each system provided in the rest of the supplementary materials.
+This document illustrates the development of the mathematical model used to calculate Net Present Values (NPV) of different agroforestry interventions promoted in Northwest Vietnam (La, 2017). The calculation of NPV for the decision to implement coffee-based agroforesty system with the combination of teak, plum, coffee, annual crop and grass against conventional monoculture of maize is used as the illustrative example for the whole process. The same function can be used for the other interventions with corresponding input data tables for each system provided in the rest of the supplementary materials.
 
 We employed the `decisionSupport` R package and its functions to develop the model and to perform probabilistic simulations. 
 
-The `chance_event()` function was used to calculate the time series occurrence of risk events. This function required two main arguments 1. the probability that a particular risk event will happen in a given year and 2. the time line for the simulation. 
+The `chance_event()` function was used to calculate the time series occurrence of risk events. This function required two main arguments:
+
+1. the probability that a particular risk event will happen in a given year and 
+
+2. the time line for the simulation. 
 
 The `gompertz_yield()` was used to calculate the yields of tree crops using identified parameters given an assumed pattern.
 
@@ -21,6 +25,8 @@ The `discount()` function was used as the last step of the decision model to cal
 `decisionSupport()` function was used to conduct the full decision analyses by performing the probabilistic simulation. The function in requires two inputs:
 1. a data table (.csv format) specifying the names and distributions for all uncertain variables
 2. an R function that predicts decision outcomes based on the variables named in the data table
+
+`multi_EVPI()` function was used to calculate expected value of perfect information (EVPI) for multiple variablesin the computing model.
 
 First, we loaded the `decisionSupport` package in R and defined sample values for all variables:
 
@@ -47,17 +53,17 @@ AF_benefit<-function(x,varnames)
 {
   #We defined each variable as vectors of 25 values corresponding to 25 years of simulation 
   
-  mono_costs<-rep(0,n_years)# the annual cost of maize monoculture 
-  establisment_cost<-rep(0,n_years)# costs for setting up agroforestry systems (AF)
-  maintenance_cost<-rep(0,n_years)# the annual cost spent on AF
-  timber_yield<-rep(0,n_years)# the yield of teak
-  tree_yield<-rep(0,n_years)# the yield of plum
-  coffee_yield<-rep(0,n_years)# the yield of coffee
-  AF_maize<-rep(0,n_years)# the yield of maize in AF
-  mono_maize<-rep(0,n_years)# the yield of maize in monocultures
-  grass_benefit<-rep(0,n_years)# the benefit from grass
-  annual_benefit<-rep(0,n_years)# the benefit of annual crops
-  reduced_soil_loss<-rep(0,n_years)# amount of soil loss reduced in AF compared to monoculture systems
+  mono_costs<-rep(0,n_years) #the annual cost of maize monoculture 
+  establisment_cost<-rep(0,n_years) #costs for setting up agroforestry systems (AF)
+  maintenance_cost<-rep(0,n_years) #the annual cost spent on AF
+  timber_yield<-rep(0,n_years) #the yield of teak
+  tree_yield<-rep(0,n_years) #the yield of plum
+  coffee_yield<-rep(0,n_years) #the yield of coffee
+  AF_maize<-rep(0,n_years) #the yield of maize in AF
+  mono_maize<-rep(0,n_years) #the yield of maize in monocultures
+  grass_benefit<-rep(0,n_years) #the benefit from grass
+  annual_benefit<-rep(0,n_years) #the benefit of annual crops
+  reduced_soil_loss<-rep(0,n_years) #amount of soil loss reduced in AF compared to monoculture systems
   
   #Simulating the chance for different events to occur during the simulation period
   frost<-chance_event(coffee_risk,value_if = 1,n=n_years)
@@ -120,7 +126,7 @@ AF_benefit<-function(x,varnames)
   AF_maize_benefit<-(tot_AF_maize*vv(maize_price,CV_maize_price,n_years))/cur_change
 
   
-  #benefit of miaze in monoculture
+  #benefit of maize in monoculture
   decay_speed_mono<--log(1-decay_rate_mono)
   mono_maize<-max_monomaize*exp(-decay_speed_mono*(time-1))
   tot_mono_maize<-vv(mono_maize*(1-maize.risk*yield_maize_risk),CV_maize_yield,n_years)
@@ -144,10 +150,10 @@ AF_benefit<-function(x,varnames)
   erosion_benefit<-(soil_saved*soil_saved_payment)/cur_change
 
   #Calculating NPVs of AF and monoculture and NPV of the decision choosing AF over monocultures of maize
-system_benefit<-timber_benefit+tree_benefit+coffee_benefit+AF_maize_benefit+grass_benefit+annual_benefit+erosion_benefit
+system_benefit<-timber_benefit+tree_benefit+coffee_benefit+AF_maize_benefit+grass_benefit+annual_benefit+erosion_benefit #total revenue of agroforestry
   bottomline_benefit<-system_benefit-maintenance_cost-establisment_cost
   tradeoff_benefit<-bottomline_benefit-mono_benefit
-  cash_flow<-discount(bottomline_benefit,discount_rate=discount_rate,calculate_NPV = FALSE)# this returned 25 values of discounted cashflows for 25 years
+  cash_flow<-discount(bottomline_benefit,discount_rate=discount_rate,calculate_NPV = FALSE) #this returned 25 values of discounted cashflows for 25 years
   cum_cash_flow<-cumsum(cash_flow)# this calculated cummulative values of discounted cashflows
   NPV_mono<-discount(mono_benefit,discount_rate=discount_rate,calculate_NPV = TRUE ) #NPV of monoculture system
   NPV_tradeoff<-discount(tradeoff_benefit,discount_rate=discount_rate,calculate_NPV = TRUE ) #NVP of the decision to choose AF over monoculture
@@ -157,10 +163,9 @@ system_benefit<-timber_benefit+tree_benefit+coffee_benefit+AF_maize_benefit+gras
 
 ```
 
-The probabilistic simulation was implemented using the `decisionSupport` function to run a Monte Carlo with 10,000 values for each of the input and response variables. These are returned as a list. A VIP score is generated for each input variable of the PLS regression.
+The probabilistic simulation was implemented using the `decisionSupport` function to run a Monte Carlo data table with 10,000 values for each of the input and response variables. These are returned as a list. A VIP score is generated for each input variable of the PLS regression.
 
 ```{r message=FALSE, warning=FALSE}
-
 decisionSupport(inputFilePath = paste("Input tables/CAFS_teak.csv",sep=""),
                 outputPath = paste("MCResults/CAFS_teak",sep=""),
                 write_table = TRUE,
@@ -170,5 +175,108 @@ decisionSupport(inputFilePath = paste("Input tables/CAFS_teak.csv",sep=""),
 
 ```
 
-## Add general output figures here
+The outcome table is then used to calculate the Value of Information for uncertain variables:
+```{r message=FALSE, warning=FALSE}
+MCall<-read.table(file="MCResults/CAFS_teak/mcSimulationResults.csv",header = TRUE,sep=",")
+mc<-MCall[,c(2:50,77)] # extracting dataset considering only initial input variables and the NVP of the decision choosing agroforestry over monoculture
+
+multi_EVPI(mc,"trade_off",write_table=TRUE)
+
+```
+
+The simulated NPVs of agroforestry and maize monoculture can be visualized as following:
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(gridExtra)
+library(cowplot)
+library(grid)
+library(dplyr)
+NPV<-MCall[,c(78,79)] #extracting the dataset including only the NPVs of maize monoculture and agrofrestry system
+NPV_stacked<- stack(NPV)
+```
+```{r fig.height = 3, fig.width = 6, fig.align = "centre",echo=FALSE}
+ggplot(NPV_stacked,aes(x=values))+ 
+  geom_histogram(data=subset(NPV_stacked,ind =='NPV_maize'),aes(fill = ind), alpha = 0.5, bins = 300)+ 
+  geom_histogram(data=subset(NPV_stacked,ind =='NPV' ),aes(fill = ind), alpha = 0.8, bins = 300) + 
+  ggtitle("Simulated net benefit")+
+  xlab("Net present value (USD)") + ylab("Frequency")+
+  geom_vline(xintercept = 0, color="red", size=0.2)+
+  scale_fill_manual(values=c("aquamarine4","chocolate4"),labels=c("Teak - plum - coffee - annual crop - forage grass","Maize monoculture"))+
+  theme(legend.title = element_blank())+
+  theme_bw()+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank())+ 
+  coord_cartesian(xlim = c(0,100000))+
+  theme(legend.position=c(0.5,.5))+
+  theme(axis.title=element_text(size=10))+
+  theme(axis.text=element_text(size=10))+
+  theme(legend.text=element_text(size=10))
+```
+
+The graph below showed the outcomes of sensitivity analysis and Value of Information analysis:
+
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+pls_table<-read.table(file="MCResults/CAFS_teak/trade_off_pls_results.csv", header=TRUE, sep=",")
+
+EVPI_table<-read.table(file="EVPI_table_trade_off.csv", header=TRUE, sep=",")
+merge_table<-merge(x=pls_table, y=EVPI_table, by.x="X", by.y="X")
+plot_table<-merge_table[,c(1,2,3,6)]
+
+pls_subset<-subset(plot_table,plot_table$VIP>=0.8)
+pls_subset$Category[pls_subset$Coefficient > 0] = "cadetblue"
+pls_subset$Category[pls_subset$Coefficient < 0] = "firebrick"
+pls_subset$Category[pls_subset$VIP < 1] ="grey"
+pls_dat<-as.data.frame(pls_subset)
+pls_dat$X <- factor(pls_dat$X, levels = pls_dat[order(pls_dat$VIP),"X"])
+p<-ggplot(pls_dat,aes(x=pls_dat$X,y=pls_dat$VIP))+
+  geom_bar(aes(fill=pls_dat$Category),stat ="identity")+ ggtitle("Variable Importance")+xlab("VIP scores")+
+  scale_fill_manual(values = c("cadetblue","firebrick","grey"))+
+  theme(axis.title.x =element_text(color="black", size=10), 
+        axis.title.y = element_blank(), 
+        axis.text.y = element_blank(), 
+        axis.ticks.y = element_blank(),
+        panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        plot.margin = unit(c(1,-1,1,0), "mm")) +
+  geom_hline(yintercept = 1, size=0.2)+theme(legend.position = "none")+
+  scale_y_reverse() + coord_flip()
+
+q<- ggplot(data = pls_dat, aes(x = pls_dat$X, y = pls_dat$EVPI)) +xlab(NULL)+
+  geom_bar(fill = "deepskyblue3",stat = "identity") + ggtitle("Value of Information") + xlab("EVPI")+
+theme(axis.title.x =element_text(color="black", size=10), 
+      axis.title.y = element_blank(), 
+      axis.text.y = element_blank(), 
+      axis.ticks.y = element_blank(),
+      panel.grid=element_blank(),
+      panel.grid.major = element_blank(), 
+      panel.grid.minor = element_blank(),
+      plot.margin = unit(c(1,0,1,-1), "mm")) +
+  coord_flip()
+
+g.mid<-ggplot(pls_dat,aes(x=1,y=pls_dat$X))+geom_text(aes(label=pls_dat$X))+
+  geom_segment(aes(x=0,xend=0,yend=pls_dat$X))+
+  geom_segment(aes(x=0,xend=0,yend=pls_dat$X))+
+  ggtitle("")+
+  ylab(NULL)+
+  scale_x_continuous(expand=c(0,0),limits=c(1.0,1.0))+
+  theme(axis.title=element_blank(),
+        panel.grid=element_blank(),
+        axis.text.y=element_blank(),
+        axis.ticks.y=element_blank(),
+        panel.background=element_blank(),
+        axis.text.x=element_text(size=10, color=NA),
+        axis.ticks.x=element_line(size=10, color=NA),
+        plot.margin = unit(c(1,0,1,0), "mm"))
+
+gg1 <- ggplot_gtable(ggplot_build(p))
+gg2 <- ggplot_gtable(ggplot_build(q))
+gg.mid <- ggplot_gtable(ggplot_build(g.mid))
+```
+
+```{r fig.height = 3, fig.width = 6, fig.align = "centre",echo=FALSE}
+cowplot::plot_grid(gg1,gg.mid,gg2, ncol = 3, align = "h")
+```
+
+
 
