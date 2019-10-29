@@ -41,7 +41,7 @@ make_variables(estimate_read_csv(paste("Input tables/CAFS_teak.csv",sep="")))
 
 The mathematical model could then be coded. We gave the name `AF_benefit` to the function that calculates NPV.
 
-```{r message=FALSE,warning=FALSE}
+```{r}
 
 AF_benefit<-function(x,varnames)
 {
