@@ -111,7 +111,6 @@ AF_benefit<-function(x,varnames)
   coffee_yield<-coffee_yield*(1-frost*coff_frost_yield) # account risk of frost in the calculation of coffee yield
   tot_coffee_yield<-coffee_yield*num_coff_tree
   coffee_benefit<-(tot_coffee_yield*vv(coff_price,CV_coff_price,n_years))/cur_change
-
   
   #benefit of maize in AF systems
  time<-1:n_years
@@ -171,5 +170,5 @@ decisionSupport(inputFilePath = paste("Input tables/CAFS_teak.csv",sep=""),
 
 ```
 
-
+## Add general output figures here
 
