@@ -10,11 +10,11 @@ This document illustrates the development of the mathematical model used to calc
 
 We employed the `decisionSupport` R package and its functions to develop the model and to perform probabilistic simulations. 
 
-The `chance_event()` function was used to calculate the time series occurrence of risk events. This function required two main arguments specified in input tables which are the probability that a particular risk event will happen in a given year and the time line for simulation. 
+The `chance_event()` function was used to calculate the time series occurrence of risk events. This function required two main arguments 1. the probability that a particular risk event will happen in a given year and 2. the time line for the simulation. 
 
-The `gompertz_yield()` calculated the yields of tree crops using identified parameters in the assumed pattern.
+The `gompertz_yield()` was used to calculate the yields of tree crops using identified parameters given an assumed pattern.
 
-The value varier function `vv()` produces time series that contain variation from a specified mean and a desired coefficient of variation, which both were parameters in the input tables. 
+The value varier function `vv()` was used to produce a time series containing variation from a specified mean and a desired coefficient of variation, which both were parameters in the input tables. 
 
 The `discount()` function was used as the last step of the decision model to calculate NPV. The function implemented discounting of future costs or benefits by a decision maker-specific discount rate, which was specified in input tables. 
 
