@@ -150,7 +150,7 @@ AF_benefit<-function(x,varnames)
   erosion_benefit<-(soil_saved*soil_saved_payment)/cur_change
 
   #Calculating NPVs of AF and monoculture and NPV of the decision choosing AF over monocultures of maize
-system_benefit<-timber_benefit+tree_benefit+coffee_benefit+AF_maize_benefit+grass_benefit+annual_benefit+erosion_benefit #total revenue of agroforestry
+system_benefit<-timber_benefit+tree_benefit+coffee_benefit+AF_maize_benefit+grass_benefit+annual_benefit+erosion_benefit #total revenue of AF
   bottomline_benefit<-system_benefit-maintenance_cost-establisment_cost
   tradeoff_benefit<-bottomline_benefit-mono_benefit
   cash_flow<-discount(bottomline_benefit,discount_rate=discount_rate,calculate_NPV = FALSE) #this returned 25 values of discounted cashflows for 25 years
