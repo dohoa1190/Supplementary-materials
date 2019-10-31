@@ -1,5 +1,5 @@
 ---
-title: Implementation of Decision Analysis to evaluate different agroforestry interventions in Northern Vietnam
+title: Implementation of Decision Analysis to evaluate agroforestry interventions in Northern Vietnam
 author: "Hoa Do, Cory Whitney, Eike Luedeling"
 date: "`r Sys.Date()`"
 output:
