@@ -6,7 +6,7 @@ output:
   html_document: default
 ---
 
-This document illustrates the development of the mathematical model used to calculate Net Present Values (NPV) of different agroforestry interventions promoted in Northwest Vietnam (La, 2017). The calculation of NPV for the decision to implement coffee-based agroforesty system with the combination of teak, plum, coffee, annual crop and grass against conventional monoculture of maize is used as the illustrative example for the whole process. The same function can be used for the other interventions with corresponding input data tables for each system provided in the rest of the supplementary materials.
+This document illustrates the development of the mathematical model used to calculate Net Present Values (NPV) of  agroforestry interventions promoted in Northwest Vietnam (La, 2017). The calculation of NPV for the decision to implement coffee-based agroforesty system with the combination of teak, plum, coffee, annual crop and grass against conventional monoculture of maize is used as the illustrative example for the whole process. The same function can be used for the other interventions with corresponding input data tables for each system provided in the rest of the supplementary materials.
 
 We employed the `decisionSupport` R package and its functions to develop the model and to perform probabilistic simulations. 
 
@@ -28,7 +28,7 @@ The `discount()` function was used as the last step of the decision model to cal
 
 `multi_EVPI()` function was used to calculate expected value of perfect information (EVPI) for multiple variables in the computing model using the outcome table from probabilistic simulation by `decisionSupport()`function
 
-First, we loaded the `decisionSupport` package in R and defined sample values for all variables:
+First, we loaded the `decisionSupport` package in R. We defined sample values for all variables by generating a `make_variables` function to select from each variable in our input table. 
 
 ```{r}
 library(decisionSupport)
@@ -39,7 +39,7 @@ for(i in colnames(x))assign(i, as.numeric(x[1,i]),envir=.GlobalEnv)}
 
 ```
 
-We applied the `make_variables` function to the input data table to generate one random number for each variable.
+We applied the `make_variables` function to `estimate_read_csv` the input data table to generate one random number for each variable.
 
 ```{r}
 make_variables(estimate_read_csv(paste("Input tables/CAFS_teak.csv",sep="")))
