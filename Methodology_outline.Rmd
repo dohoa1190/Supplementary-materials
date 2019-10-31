@@ -18,7 +18,7 @@ The `chance_event()` function was used to calculate the time series occurrence o
 
 The `gompertz_yield()` was used to calculate the yields of tree crops using identified parameters given an assumed pattern.
 
-The value varier function `vv()` was used to produce a time series containing variation from a specified mean and a desired coefficient of variation, bothof  which are parameters in the input tables. 
+The value varier function `vv()` was used to produce a time series containing variation from a specified mean and a desired coefficient of variation, both of  which are parameters in the input tables. 
 
 The `discount()` function was used as the last step of the decision model to calculate NPV. The function implemented discounting of future costs or benefits by a decision maker-specific discount rate, also specified in the input tables. 
 
