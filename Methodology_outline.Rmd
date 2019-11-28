@@ -1,8 +1,10 @@
 ---
-title: Implementation of Decision Analysis to evaluate agroforestry interventions in Northern Vietnam
+title: Implementation of Decision Analysis to evaluate agroforestry interventions
+  in Northern Vietnam
 author: "Hoa Do, Cory Whitney, Eike Luedeling"
 date: "`r Sys.Date()`"
 output:
+  pdf_document: default
   html_document: default
 ---
 
@@ -18,13 +20,34 @@ The `chance_event()` function was used to calculate the time series occurrence o
 
 The `gompertz_yield()` function was used to calculate the yields of tree crops using identified parameters given an assumed pattern.
 
+According to this model, tree yields increase over time until reaching a plateau, which represents their full productive capacity. This production level is then maintained for the remainder of the production cycle. Three critical points were specified to define these yield curves: 
+
+```{r Gompert curve, echo=FALSE, fig.cap="Gompertz curve describing the yield of tree crops (i.e. Shan tea, son tra, longan, mango, plum, and macadamia)", fig.width=20, fig.height=16}
+knitr::include_graphics("Gompert.png")
+```
+
+The plateau $Y_{max}$ of the Gompertz curve is the maximum yield that a tree can attain throughout its life cycle. The curve was parameterized based on yields $Y_{T1}$ and $Y_{T2}$ at time $T1$ and $T2$, respectively, considering the ages of trees for which participants were best able to provide estimates. The yield of Arabica coffee was simulated with only two periods following the same Gompertz patterns. The first fifteen-year productive stage was followed by a second ten-year productive stage. 
+
+The yield of maize in agroforestry systems was assumed to decline corresponding to an exponential decay function: 
+$$Y=Y_{f\ }+\ \left(Y_{o\ }-\ Y_f\right)e^{-kt}$$
+in which $Y_{o}$ is the initial maize yield in the year a system is established. $Y_{f}$ is the minimum yield that maize can maintain. The minimum yield reflects the ability of agroforestry to stabilize maize yield during the simulation period. Coefficient k represents how fast maize yield will approach the $Y_{f}$ value, $t$ indicates the production cycles. This decline was included because space occupation and shading of forage grass and tree components in agroforestry systems are expected to reduce yields over time. 
+The yield of maize in monoculture stands decreased in response to the decrease in soil organic matter and soil nutrient status in the course of cultivation: 
+$$Y=Y_oe^{-kt}$$
+
+
 The value varier function `vv()` was used to produce a time series containing variation from a specified mean and a desired coefficient of variation, both of which are parameters in the input tables. 
 
 The `discount()` function was used to calculate NPV in the last step of the decision modeling procedure. The function implements discounting of future costs or benefits by a decision maker-specific discount rate, also specified in the input tables. 
 
-`decisionSupport()` function was used to conduct the full decision analyses by performing the probabilistic simulation. The function in requires two inputs:
+`decisionSupport()` function was used to conduct the full decision analyses by performing the probabilistic simulation through Monte Carlo technique. Monte Carlo simulationcan perform calculations using distributions and ranges, which is a major advantage over traditional spreadsheet calculations. In a Monte Carlo simulation, a particular calculation is repeated many times, with each run parameterized with random draws from distributions that are defined for each variable. The output then consists of a set of values instead of single estimates.
+
+The function in requires two inputs:
+
 1. a data table (.csv format) specifying the names and distributions for all uncertain variables and,
+
 2. an R function that predicts decision outcomes based on the variables named in the data table.
+
+We defined binomial distributions for the occurrence of risk events, since the respective events could only either occur or not occur. Most of the yield-related variables, discount rates and the benefits from soil loss prevention were expressed as normal distributions but constrained to positive values only. Certain highly unpredictable variables such as crop prices were expressed using uniform distributions. Other highly consistent variables such as tree planting densities were assigned constant values.
 
 `multi_EVPI()` function was used to calculate the expected value of perfect information (EVPI) for multiple variables in the model using the simulation outcome table from the `decisionSupport()`function.
 
@@ -173,7 +196,7 @@ system_benefit <- timber_benefit+tree_benefit+coffee_benefit+AF_maize_benefit+gr
 
 The probabilistic simulation was implemented using the `decisionSupport` function to return a Monte Carlo data table with 10,000 values for each of the input and response variables in the return list. A VIP score is generated for each input variable of the PLS regression.
 
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, include=FALSE}
 decisionSupport(inputFilePath = paste("Input tables/CAFS_teak.csv",sep=""),
                 outputPath = paste("MCResults/CAFS_teak",sep=""),
                 write_table = TRUE,
@@ -185,7 +208,7 @@ decisionSupport(inputFilePath = paste("Input tables/CAFS_teak.csv",sep=""),
 
 
 The outcome table is then used to calculate the Value of Information for uncertain variables:
-```{r message=FALSE, warning=FALSE}
+```{r message=FALSE, warning=FALSE, include=FALSE, cache=TRUE}
 MCall <- read.table(file="MCResults/CAFS_teak/mcSimulationResults.csv",header = TRUE,sep=",")
 mc <- MCall[,c(2:50,77)] # extracting dataset considering only initial input variables and the NPV of the decision of choosing AF or monocultures
 
