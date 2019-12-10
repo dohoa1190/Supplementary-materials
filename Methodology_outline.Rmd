@@ -23,11 +23,11 @@ knitr::write_bib(c(.packages(),
 
 ## Model development process
 
-This document illustrates the development of the mathematical model used to calculate Net Present Values (NPV) of  agroforestry interventions promoted in Northwest Vietnam. This process was implemented in R programming language [@R-base]. To illustrate the modeling procedures we highlight NPV calculations for the decision to choose coffee-based agroforesty systems (combination of coffee, teak, plum, coffee, annual crops and grass) over conventional monocultures of maize. The same procedures and functions can be used for the other interventions. The corresponding input data tables for each system are provided in the rest of the supplementary materials.
+This document illustrates the development of the mathematical model used to calculate Net Present Values (NPV) of  agroforestry interventions promoted in Northwest Vietnam. This process was implemented in the R programming language [@R-base]. To illustrate the modeling procedures we highlight NPV calculations for the decision to choose coffee-based agroforesty systems (combination of coffee, teak, plum, annual crops and grass) over conventional monocultures of maize. The same procedures and functions can be used for the other interventions. The corresponding input data tables for each system are provided in the rest of the supplementary materials.
 
 We employed the `decisionSupport` R package [@R-decisionSupport] and its functions to develop the model and to perform probabilistic simulations. 
 
-The `chance_event()` function was used to calculate the time series occurrence of risk events. This function required two main arguments:
+The `chance_event()` function was used to calculate the time series occurrence of risk events. This function requires two main arguments:
 
 1. the probability that a particular risk event will happen in a given year and 
 
@@ -35,13 +35,13 @@ The `chance_event()` function was used to calculate the time series occurrence o
 
 The `gompertz_yield()` function was used to calculate the yields of tree crops using identified parameters given an assumed pattern.
 
-The value varier function `vv()` was used to produce a time series containing variation from a specified mean and a desired coefficient of variation, both of which are parameters in the input tables. 
+The value varier function `vv()` was used to produce realistic time series of data that included year-to-year variation around a specified mean, determined by a desired coefficient of variation. Both mean and coefficient of variation are provided to the model via the input table.
 
-The `discount()` function was used to calculate NPV in the last step of the decision modeling procedure. The function implements discounting of future costs or benefits by a decision maker-specific discount rate, also specified in the input tables. 
+The `discount()` function was used to calculate NPV in the last step of the decision modeling procedure. The function implements discounting of future costs or benefits by a decision maker-specific discount rate, which is also specified in the input tables. 
 
-`decisionSupport()` function was used to conduct the full decision analyses by performing the probabilistic simulation through Monte Carlo technique. Monte Carlo simulation can perform calculations using distributions and ranges, which is a major advantage over traditional spreadsheet calculations. In a Monte Carlo simulation, a particular calculation is repeated many times, with each run parameterized with random draws from distributions that are defined for each variable. The output then consists of a set of values instead of single estimates.
+The `decisionSupport()` function was used to conduct the full decision analyses by performing probabilistic simulations using the Monte Carlo technique. Monte Carlo simulation can perform calculations using distributions and ranges. This is a major advantage over traditional spreadsheet calculations. In a Monte Carlo simulation, a particular calculation is repeated many times, with each run parameterized with random draws from distributions that are defined for each variable. The output then consists of a set of values instead of single estimates.
 
-The function in requires two inputs:
+The function requires two inputs:
 
 1. a data table (.csv format) specifying the names and distributions for all uncertain variables and,
 
@@ -61,13 +61,13 @@ for(i in colnames(x))assign(i, as.numeric(x[1,i]),envir=.GlobalEnv)}
 
 ```
 
-We applied the `make_variables` function to `estimate_read_csv` the input data table to generate one random number for each variable.
+We applied the `make_variables` function to `estimate_read_csv`, the input data table, to generate one random number for each variable.These numbers are not used in the simulation, but they allow running all the code in the model for testing and troublesshooting purposes.
 
 ```{r}
 make_variables(estimate_read_csv(paste("Input tables/CAFS_teak.csv",sep="")))
 ```
 
-The mathematical model could then be coded. We gave the name `AF_benefit` to the function that calculates NPV.
+The mathematical model could then be coded. We gave the name `AF_benefit` to the function that calculates the NPV.
 
 ```{r message=FALSE,warning=FALSE}
 
@@ -206,7 +206,7 @@ decisionSupport(inputFilePath = paste("Input tables/CAFS_teak.csv",sep=""),
 ```
 
 
-The outcome table is then used to calculate the Value of Information for uncertain variables using `multi_EVPI` function in `decisionSupport` package [@R-decisionSupport]:
+The outcome table is then used to calculate the Value of Information for uncertain variables using the `multi_EVPI` function in the `decisionSupport` package [@R-decisionSupport]:
 ```{r message=FALSE, warning=FALSE,cache=TRUE}
 MCall <- read.table(file="MCResults/CAFS_teak/mcSimulationResults.csv",header = TRUE,sep=",")
 mc <- MCall[,c(2:50,77)] # extracting dataset considering only initial input variables and the NPV of the decision of choosing AF or monocultures
@@ -217,7 +217,7 @@ multi_EVPI(mc,"trade_off",write_table=TRUE)
 
 ## Data visualization
 
-The simulated NPVs of agroforestry and maize monoculture are visualized using `ggplot2` package [@R-ggplot2]
+The simulated NPVs of agroforestry and maize monoculture are visualized using the `ggplot2` package [@R-ggplot2]
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 NPV <- MCall[,c(78,79)] #extracting the dataset including only the NPVs of maize monoculture and agrofrestry system
@@ -241,7 +241,7 @@ ggplot(NPV_stacked,aes(x=values))+
   theme(legend.text=element_text(size=10))
 ```
 
-The single graphs below is generated using cowplot package [@R-cowplot] to show the outcomes for both the sensitivity analysis (left) and Value of Information analysis (right).
+The single graph below is generated using the `cowplot` package [@R-cowplot] to show the outcomes for both the sensitivity analysis (left) and Value of Information analysis (right).
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 
