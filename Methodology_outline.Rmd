@@ -1,15 +1,31 @@
 ---
-title: Implementation of Decision Analysis to evaluate agroforestry interventions
-  in Northern Vietnam
+title: Implementation of Decision Analysis to evaluate agroforestry interventions in Northern Vietnam
 author: "Hoa Do, Eike Luedeling, Cory Whitney"
 date: "`r Sys.Date()`"
 output:
   html_document: default
+bibliography: packages.bib
 ---
+```{r echo=FALSE, message=FALSE, warning=FALSE}
+library(cowplot)
+library(decisionSupport)
+library(dplyr)
+library(ggplot2)
+```
+```{r, warning=FALSE, include = FALSE}
+#Automatically write R package citation entries to a .bib file
+knitr::write_bib(c(.packages(),
+                   'cowplot',
+                   'decisionSupport',
+                   'dplyr',
+                   'ggplot2'),'packages.bib')
+```
 
-This document illustrates the development of the mathematical model used to calculate Net Present Values (NPV) of  agroforestry interventions promoted in Northwest Vietnam. To illustrate the modeling procedures we highlight NPV calculations for the decision to choose coffee-based agroforesty systems (combination of coffee, teak, plum, coffee, annual crops and grass) over conventional monocultures of maize. The same procudures and functions can be used for the other interventions. The corresponding input data tables for each system are provided in the rest of the supplementary materials.
+## Model development process
 
-We employed the `decisionSupport` R package and its functions to develop the model and to perform probabilistic simulations. 
+This document illustrates the development of the mathematical model used to calculate Net Present Values (NPV) of  agroforestry interventions promoted in Northwest Vietnam. This process was implemented in R programming language [@R-base]. To illustrate the modeling procedures we highlight NPV calculations for the decision to choose coffee-based agroforesty systems (combination of coffee, teak, plum, coffee, annual crops and grass) over conventional monocultures of maize. The same procedures and functions can be used for the other interventions. The corresponding input data tables for each system are provided in the rest of the supplementary materials.
+
+We employed the `decisionSupport` R package [@R-decisionSupport] and its functions to develop the model and to perform probabilistic simulations. 
 
 The `chance_event()` function was used to calculate the time series occurrence of risk events. This function required two main arguments:
 
@@ -23,7 +39,7 @@ The value varier function `vv()` was used to produce a time series containing va
 
 The `discount()` function was used to calculate NPV in the last step of the decision modeling procedure. The function implements discounting of future costs or benefits by a decision maker-specific discount rate, also specified in the input tables. 
 
-`decisionSupport()` function was used to conduct the full decision analyses by performing the probabilistic simulation through Monte Carlo technique. Monte Carlo simulationcan perform calculations using distributions and ranges, which is a major advantage over traditional spreadsheet calculations. In a Monte Carlo simulation, a particular calculation is repeated many times, with each run parameterized with random draws from distributions that are defined for each variable. The output then consists of a set of values instead of single estimates.
+`decisionSupport()` function was used to conduct the full decision analyses by performing the probabilistic simulation through Monte Carlo technique. Monte Carlo simulation can perform calculations using distributions and ranges, which is a major advantage over traditional spreadsheet calculations. In a Monte Carlo simulation, a particular calculation is repeated many times, with each run parameterized with random draws from distributions that are defined for each variable. The output then consists of a set of values instead of single estimates.
 
 The function in requires two inputs:
 
@@ -35,10 +51,9 @@ We defined binomial distributions for the occurrence of risk events, since the r
 
 The `multi_EVPI()` function was used to calculate the expected value of perfect information (EVPI) for multiple variables in the model using the simulation outcome table from the `decisionSupport()`function.
 
-First, we loaded the `decisionSupport` package in R. We defined sample values for all variables by generating a `make_variables` function to select randomly from each variable in our input table. 
+First we defined sample values for all variables by generating a `make_variables` function to select randomly from each variable in our input table. 
 
 ```{r}
-library(decisionSupport)
 
 make_variables <- function(est,n=1)
 {x <- random(rho=est,n=n)
@@ -191,7 +206,7 @@ decisionSupport(inputFilePath = paste("Input tables/CAFS_teak.csv",sep=""),
 ```
 
 
-The outcome table is then used to calculate the Value of Information for uncertain variables:
+The outcome table is then used to calculate the Value of Information for uncertain variables using `multi_EVPI` function in `decisionSupport` package [@R-decisionSupport]:
 ```{r message=FALSE, warning=FALSE,cache=TRUE}
 MCall <- read.table(file="MCResults/CAFS_teak/mcSimulationResults.csv",header = TRUE,sep=",")
 mc <- MCall[,c(2:50,77)] # extracting dataset considering only initial input variables and the NPV of the decision of choosing AF or monocultures
@@ -200,14 +215,11 @@ multi_EVPI(mc,"trade_off",write_table=TRUE)
 
 ```
 
-The simulated NPVs of agroforestry and maize monoculture can be visualized as following:
+## Data visualization
+
+The simulated NPVs of agroforestry and maize monoculture are visualized using `ggplot2` package [@R-ggplot2]
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
-library(ggplot2)
-library(gridExtra)
-library(cowplot)
-library(grid)
-library(dplyr)
 NPV <- MCall[,c(78,79)] #extracting the dataset including only the NPVs of maize monoculture and agrofrestry system
 NPV_stacked <-  stack(NPV)
 ```
@@ -229,7 +241,7 @@ ggplot(NPV_stacked,aes(x=values))+
   theme(legend.text=element_text(size=10))
 ```
 
-The graphs below show the outcomes for both the sensitivity analysis (left) and Value of Information analysis (right).
+The single graphs below is generated using cowplot package [@R-cowplot] to show the outcomes for both the sensitivity analysis (left) and Value of Information analysis (right).
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -305,5 +317,7 @@ cowplot::plot_grid(gg1,gg.mid,gg2, ncol = 3, align = "h")
 
 ```
 
+
+## References
 
 
