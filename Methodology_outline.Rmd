@@ -1,7 +1,6 @@
 ---
 title: Farmers rely on short-term returns and need incentives to adopt agroforestry
 author: Hoa Do$^1$$^*$, Eike Luedeling$^1$, Cory Whitney$^1$
-#institute: "$^1$Department of Horticultural Sciences, Institute of Crop Science and Resource Conservation, University of Bonn, Germany"
 date: "`r Sys.Date()`"
 output:
 pdf_document: default 
