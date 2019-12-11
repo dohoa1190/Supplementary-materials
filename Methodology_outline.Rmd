@@ -1,6 +1,5 @@
 ---
 title: Farmers rely on short-term returns and need incentives to adopt agroforestry
-#journal: "Agronomy for Sustainable Development"
 author: Hoa Do$^1$$^*$, Eike Luedeling$^1$, Cory Whitney$^1$
 #institute: "$^1$Department of Horticultural Sciences, Institute of Crop Science and Resource Conservation, University of Bonn, Germany"
 date: "`r Sys.Date()`"
@@ -12,7 +11,9 @@ subtitle: Implementation of the decision model for agroforestry planning in Nort
 bibliography: packages.bib
 ---
 $^1$Department of Horticultural Sciences, Institute of Crop Science and Resource Conservation, University of Bonn, Germany  
-$^*$Coresponding author: *dohoa1190@gmail.com*
+$^*$**Coresponding author**: *dohoa1190@gmail.com*  
+Journal: *Agronomy for Sustainable Development*  
+
 
 
 
@@ -33,7 +34,8 @@ knitr::write_bib(c(.packages(),
 
 
 
-This document illustrates the development of the mathematical model used to calculate Net Present Values (NPV) of  agroforestry interventions promoted in Northwest Vietnam. This process was implemented in the R programming language [@R-base]. To illustrate the modeling procedures we highlight NPV calculations for the decision to choose coffee-based agroforesty systems (combination of coffee, teak, plum, annual crops and grass) over conventional monocultures of maize. The same procedures and functions can be used for the other interventions. The corresponding input data tables for each system are provided in the rest of the supplementary materials.
+
+This document illustrates the development of the mathematical model used to calculate Net Present Values (NPV) of  agroforestry interventions promoted in Northwest Vietnam. This process was implemented in the R programming language [@R-base]. To illustrate the modeling procedures we highlight NPV calculations for the decision to choose coffee-based agroforesty systems (combinations of coffee, teak, plum, annual crops and grass) over conventional monocultures of maize. The same procedures and functions can be used for the other interventions. The corresponding input data tables for each system are provided in the rest of the supplementary materials.
 
 
 ## Model development process
@@ -255,7 +257,7 @@ ggplot(NPV_stacked,aes(x=values))+
   ggtitle("Simulated net benefit")+
   xlab("Net present value (USD)") + ylab("Frequency")+
   geom_vline(xintercept = 0, color="red", size=0.2)+
-  scale_fill_manual(name="Systems",values=c("aquamarine4","chocolate4"),labels=c("Teak - plum - coffee - annual crop - forage grass","Maize monoculture"))+
+  scale_fill_manual(name="system",values=c("aquamarine4","chocolate4"),labels=c("Teak - plum - coffee - annual crop - forage grass","Maize monoculture"))+
   theme_bw()+
   theme(panel.grid.major = element_blank(), 
         panel.grid.minor = element_blank())+ 
@@ -265,6 +267,7 @@ ggplot(NPV_stacked,aes(x=values))+
   theme(axis.text=element_text(size=10))+
   theme(legend.text=element_text(size=10))
 ```
+
 
 The single graph below is generated using the `cowplot` package [@R-cowplot] to show the outcomes for both the sensitivity analysis (left) and Value of Information analysis (right).
 
@@ -290,7 +293,7 @@ p <- ggplot(pls_dat,aes(x=pls_dat$X,y=pls_dat$VIP))+
   ylab("VIP scores")+
   xlab(NULL)+
   scale_fill_manual(values = c("cadetblue","firebrick","grey"))+
-  theme(axis.title.y =element_text(color="black", size=10), 
+  theme(axis.title.y =element_text(color="black", size=8), 
         axis.text.y = element_blank(), 
         axis.ticks.y = element_blank(),
         panel.grid.major = element_blank(), 
@@ -306,7 +309,7 @@ q <-  ggplot(data = pls_dat, aes(x = pls_dat$X, y = pls_dat$EVPI))+
   ggtitle("Value of Information") + 
   ylab("EVPI")+ 
   xlab(NULL)+
-theme(axis.title.y = element_text(color="black", size=10), 
+theme(axis.title.y = element_text(color="black", size=8), 
       axis.text.y = element_blank(), 
       axis.ticks.y = element_blank(),
       panel.grid=element_blank(),
