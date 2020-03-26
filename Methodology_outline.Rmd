@@ -2,15 +2,13 @@
 title: Decision Analysis of agroforestry options reveals adoption risks for resource-poor farmers
 author: Hoa Do$^1$$^*$, Eike Luedeling$^1$, Cory Whitney$^1$
 date: "`r Sys.Date()`"
-output:
-pdf_document: default 
-
+output: pdf_document
 subtitle: Implementation of the decision model for agroforestry planning in Northwest
   Vietnam
 bibliography: packages.bib
 ---
 $^1$Department of Horticultural Sciences, Institute of Crop Science and Resource Conservation, University of Bonn, Germany  
-$^*$**Coresponding author**: *dohoa1190@gmail.com*  
+$^*$**Corresponding author**: *dohoa1190@gmail.com*  
 Journal: *Agronomy for Sustainable Development*  
 
 
@@ -34,7 +32,7 @@ knitr::write_bib(c(.packages(),
 
 
 
-This document illustrates the development of the mathematical model used to calculate Net Present Values (NPV) of  agroforestry interventions promoted in Northwest Vietnam. This process was implemented in the R programming language [@R-base]. To illustrate the modeling procedures we highlight NPV calculations for the decision to choose coffee-based agroforesty systems (combinations of coffee, teak, plum, annual crops and grass) over conventional monocultures of maize. The same procedures and functions can be used for the other interventions. The corresponding input data tables for each system are provided in the rest of the supplementary materials.
+This document illustrates the development of the mathematical model used to calculate Net Present Values (NPV) of  agroforestry interventions promoted in Northwest Vietnam. This process was implemented in the R programming language [@R-base]. To illustrate the modeling procedures we highlight NPV calculations for the decision to choose coffee-based agroforestry systems (combinations of coffee, teak, plum, annual crops and grass) over conventional monocultures of maize. The same procedures and functions can be used for the other interventions. The corresponding input data tables for each system are provided in the rest of the supplementary materials.
 
 
 ## Model development process
@@ -75,7 +73,7 @@ for(i in colnames(x))assign(i, as.numeric(x[1,i]),envir=.GlobalEnv)}
 
 ```
 
-We applied the `make_variables` function to `estimate_read_csv`, the input data table, to generate one random number for each variable.These numbers are not used in the simulation, but they allow running all the code in the model for testing and troublesshooting purposes.
+We applied the `make_variables` function to `estimate_read_csv`, the input data table, to generate one random number for each variable.These numbers are not used in the simulation, but they allow running all the code in the model for testing and troubleshooting purposes.
 
 ```{r}
 make_variables(estimate_read_csv(paste("Input tables/CAFS_teak.csv",sep="")))
@@ -270,7 +268,7 @@ ggplot(NPV_stacked,aes(x=values))+
 
 The single graph below is generated using the `cowplot` package [@R-cowplot] to show the outcomes for both the sensitivity analysis (left) and Value of Information analysis (right).
 
-```{r echo=FALSE, message=FALSE, warning=FALSE}
+```{r name_of_code_chunk_that_does_something, echo=FALSE, message=FALSE, warning=FALSE}
 
 pls_table <- read.table(file="MCResults/CAFS_teak/trade_off_pls_results.csv", header=TRUE, sep=",")
 
