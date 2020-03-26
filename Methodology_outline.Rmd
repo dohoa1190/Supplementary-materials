@@ -1,5 +1,5 @@
 ---
-title: Farmers rely on short-term returns and need incentives to adopt agroforestry
+title: Decision Analysis of agroforestry options reveals adoption risks for resource-poor farmers
 author: Hoa Do$^1$$^*$, Eike Luedeling$^1$, Cory Whitney$^1$
 date: "`r Sys.Date()`"
 output:
