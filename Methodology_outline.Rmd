@@ -20,6 +20,7 @@ library(decisionSupport)
 library(dplyr)
 library(ggplot2)
 ```
+
 ```{r, warning=FALSE, include = FALSE}
 #Automatically write R package citation entries to a .bib file
 knitr::write_bib(c(.packages(),
@@ -28,8 +29,6 @@ knitr::write_bib(c(.packages(),
                    'dplyr',
                    'ggplot2'),'packages.bib')
 ```
-
-
 
 
 This document illustrates the development of the mathematical model used to calculate Net Present Values (NPV) of  agroforestry interventions promoted in Northwest Vietnam. This process was implemented in the R programming language [@R-base]. To illustrate the modeling procedures we highlight NPV calculations for the decision to choose coffee-based agroforestry systems (combinations of coffee, teak, plum, annual crops and grass) over conventional monocultures of maize. The same procedures and functions can be used for the other interventions. The corresponding input data tables for each system are provided in the rest of the supplementary materials.
